@@ -3,7 +3,7 @@ Put scripts under Army folder
 
 Edit and fill fields player name, weap, helm, cape
 
-client crash when stop script on Darkon, i dont know why. it has no issue when stopping in other ultra.
+The client crashes when stopping the script on Darkon, and I don't know why. There are no issues when stopping it on other ultras. So, either keep it running until it stops by itself or just don't run Darkon.
 
 Will good if you can refactor so it can go public.
 

@@ -38,25 +38,25 @@ public class CoreUltra
         new Option<string>(
             " ",
             "Mode Explanation [player1]",
-            "player1:\r\nclass: LR\r\nweap: arcana,vali,daunt\r\ncape: vain,peni,lament",
+            "player1:\r\nclass: LR, LC\r\nweap: Arcana, Valiance, Dauntless, Elysium\r\ncape: Vainglory, Penitence, Lament\r\nhelm: Wizard, Forge",
             "click here"
         ),
         new Option<string>(
             " ",
             "Mode Explanation [player2]",
-            "player2:\r\nclass: QCM,LR,SC,CAV\r\nweap: ely,lace,vali,daunt\r\ncape: abso,lament",
+            "player2:\r\nclass: LC, QCM, SC, CaV, VDK\r\nweap: Elysium, Valiance, Lacerate, Dauntless\r\ncape: Lament, Absolution, Penitence, Vainglory\r\nhelm: Wizard, Forge, Luck, Anima",
             "click here"
         ),
         new Option<string>(
             " ",
             "Mode Explanation [player3]",
-            "player3:\r\nclass: LOO,CAV\r\nweap: ab,daunt\r\ncape: peni,ava,lament,abso",
+            "player3:\r\nclass: LoO, CaV\r\nweap: AweBlast, Dauntless, Valiance\r\ncape: Avarice, Penitence, Absolution, Lament\r\nhelm: Luck, Forge",
             "click here"
         ),
         new Option<string>(
             " ",
             "Mode Explanation [player4]",
-            "player4:\r\nclass: AP,VDK,SC\r\nweap: rave,arca,daunt,vali\r\ncape: peni,ava,lament,abso",
+            "player4:\r\nclass: AP, VDK, LR\r\nweap: Ravenous, Arcana, Dauntless, Valiance, Lacerate\r\ncape: Avarice, Penitence, Lament\r\nhelm: Luck, Forge, Pneuma",
             "click here"
         ),
         new Option<string>("SafePot", "your safe pot", "yeah safe pot wont be used", "Vigil"),
@@ -106,20 +106,6 @@ public class CoreUltra
 
         sArmy.setLogName($"{OptionsStorage}Logging");
         setPlayerName();
-        // sArmy.ClearLogFile();
-        // Core.Logger("wait log clear");
-        // if (Bot.Player.Username.ToLower() != player1)
-        // {
-        //     while (!Bot.ShouldExit)
-        //     {
-        //         Bot.Sleep(500);
-        //         if (sArmy.isEmpty())
-        //         {
-        //             break;
-        //         }
-        //     }
-        // }
-        // Core.Logger("log cleared");
         PartyMembers = new[] { player1, player2, player3, player4 };
     }
 
@@ -751,26 +737,9 @@ public class CoreUltra
                             Bot.Skills.UseSkill(4);
                         if (Bot.Target.HasActiveAura("Focus"))
                             Bot.Skills.UseSkill(5);
-                        // if (
-                        //     classUsed == "Lord Of Order"
-                        //     && (monsHP <= 10000000 && monsHP >= 4730000)
-                        //     && skillList[i] == 4
-                        // )
-                        // {
-                        //     continue;
-                        // }
                         Bot.Skills.UseSkill(skillList[i]);
                         Bot.Skills.UseSkill(2);
 
-                        // if ((classUsed != "Lord Of Order") && belowHealthPercentage(70))
-                        // {
-                        //     Bot.Skills.UseSkill(3);
-                        // }
-                        // else if ((classUsed == "Lord Of Order") && belowHealthPercentage(70))
-                        // {
-                        //     Bot.Skills.UseSkill(2);
-                        //     Bot.Skills.UseSkill(5);
-                        // }
                     }
                 }
             }
@@ -781,70 +750,6 @@ public class CoreUltra
         Core.Logger(doneMsg);
         Bot.Events.PlayerAFK -= PlayerAFK;
         Bot.Sleep(1000);
-
-        // killWithArmy(
-        //     UltraBosses.UltraDarkon,
-        //     bossId,
-        //     cellMsg,
-        //     clientName,
-        //     mapName,
-        //     waitIn,
-        //     doneMsg,
-        //     bossCell,
-        //     bossPad,
-        //     questId,
-        //     tempInv,
-        //     skillAction
-        // );
-        // Bot.Events.ExtensionPacketReceived -= DarkonHandler;
-
-        // void skillAction()
-        // {
-        //     int monsHP = GetMonsterHP("1");
-        //     bool isFocusRequired = classUsed == "Legion Revenant" && getFocusCount() == 0;
-
-        //     bool isMonsterTargeted = isMonsterAlive("1") && Bot.Player.HasTarget;
-        //     bool targetFocus = Bot.Target.HasActiveAura("Focus");
-
-        //     if (classUsed == "Lord Of Order" && (monsHP <= 4700000 && monsHP >= 4400000))
-        //         Bot.Skills.UseSkill(4);
-        //     for (int i = 0; i < skillList.Length; i++)
-        //     {
-        //         if (isFocusRequired && isMonsterTargeted && !targetFocus)
-        //         {
-        //             ForceSkill(5);
-        //         }
-        //         if (getWaitTaunt())
-        //         {
-        //             if (DateTime.Now > targetTime)
-        //             {
-        //                 ForceSkill(5);
-        //                 // waitTaunt = false;
-        //                 setWaitTaunt(false);
-        //             }
-        //         }
-        //         if (
-        //             classUsed == "Lord Of Order"
-        //             && (monsHP <= 10000000 && monsHP >= 4730000)
-        //             && skillList[i] == 4
-        //         )
-        //         {
-        //             continue;
-        //         }
-        //         Bot.Skills.UseSkill(skillList[i]);
-
-        //         if ((classUsed != "Lord Of Order") && belowHealthPercentage(70))
-        //         {
-        //             Bot.Skills.UseSkill(3);
-        //         }
-        //         else if ((classUsed == "Lord Of Order") && belowHealthPercentage(70))
-        //         {
-        //             Bot.Skills.UseSkill(2);
-        //             Bot.Skills.UseSkill(5);
-        //         }
-        //     }
-        //     Bot.Skills.UseSkill(2);
-        // }
     }
 
     private void killWithArmy(
@@ -1055,8 +960,6 @@ public class CoreUltra
     {
         if (!Bot.Player.Alive)
             return;
-        // Bot.Sleep(wait);
-        // await Task.Delay(wait);
         if (Bot.Player.HasTarget)
         {
             while (!Bot.ShouldExit && !Bot.Skills.CanUseSkill(skill))
@@ -1069,12 +972,6 @@ public class CoreUltra
             Bot.Skills.UseSkill(skill);
         }
 
-        // while (!Bot.ShouldExit && Bot.Skills.CanUseSkill(skill))
-        // {
-        //     // await Task.Delay(10);
-        //     Bot.Sleep(5);
-        //     Bot.Skills.UseSkill(skill);
-        // }
     }
 
     private int speakerCounter = 0;
@@ -1199,19 +1096,6 @@ public class CoreUltra
         }
     }
 
-    private int taunterIndex = 0;
-    private int[] toTaunt =
-    {
-        18200000,
-        16200000,
-        14200000,
-        12200000,
-        10120000,
-        8120000,
-        6120000,
-        4120000,
-        2120000
-    };
 
     private bool drakathHealthCheck(int HP)
     {
@@ -1235,110 +1119,6 @@ public class CoreUltra
             return true;
         return false;
     }
-
-    private void ChampionDrakathHandler(dynamic packet)
-    {
-        string type = packet["params"].type;
-        dynamic data = packet["params"].dataObj;
-        if (type is not null and "json")
-        {
-            string cmd = data.cmd;
-            switch (cmd)
-            {
-                case "ct":
-
-                    int monsHP = data.m["1"].intHP;
-                    string? currentClass = Bot.Player.CurrentClass?.Name;
-                    if (currentClass.Contains("Legion Revenant") && drakathHealthCheck(monsHP))
-                    {
-                        // ForceSkill(5);
-                        Bot.Skills.UseSkill(5);
-                    }
-                    break;
-            }
-        }
-    }
-
-    private int focusCount = 0;
-    private int getFocusCount(){
-        return focusCount;
-    }
-
-    // private void DarkonHandler(dynamic packet)
-    // {
-    //     string type = packet["params"].type;
-    //     dynamic data = packet["params"].dataObj;
-    //     if (type is not null and "json")
-    //     {
-    //         string cmd = data.cmd;
-    //         switch (cmd)
-    //         {
-    //             case "ct":
-    //                 string? currentClass = Bot.Player.CurrentClass?.Name;
-
-    //                 if (data.a is not null)
-    //                 {
-    //                     foreach (var a in data.a)
-    //                     {
-    //                         if (a is null)
-    //                             continue;
-    //                         string auranya = a.auras["nam"];
-    //                         string fadeArua = a.cmd;
-    //                         if (
-    //                             auranya is not null
-    //                             && auranya.ToLower().Contains("focus")
-    //                             && fadeArua.Contains("aura+")
-    //                         )
-    //                         {
-    //                             focusCount++;
-    //                             if (focusCount % 2 == 1 && currentClass.Contains("Lord Of Order"))
-    //                             {
-    //                                 setTargetTime(4);
-    //                                 // waitTaunt = true;
-    //                                 setWaitTaunt(true);
-    //                                 return;
-    //                             }
-    //                             if (focusCount % 2 == 0 && currentClass.Contains("Legion Revenant"))
-    //                             {
-    //                                 // setTargetTime(4);
-    //                                 setWaitTaunt(true);
-    //                                 waitTaunt = true;
-    //                                 return;
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-
-                    
-
-    //                 // dynamic anims = data.anims?[0]!;
-    //                 // string? currentClass = Bot.Player.CurrentClass?.Name;
-    //                 // int monsHP = data.m["1"].intHP;
-    //                 // if (currentClass.Contains("Legion Revenant") && monsHP <= 21875000)
-    //                 //     Bot.Skills.UseSkill(5);
-    //                 // if (currentClass.Contains("StoneCrusher") && monsHP <= 22000000)
-    //                 //     Bot.Skills.UseSkill(5);
-    //                 // if (
-    //                 //     currentClass.Contains("Lord Of Order")
-    //                 //     && (monsHP <= 4700000 && monsHP >= 4400000)
-    //                 // )
-    //                 // if (currentClass.Contains("Lord Of Order")){
-    //                 // if (monsHP <= 4700000 && monsHP >= 4650000){
-    //                 //         ForceSkill(4);
-    //                 //         skillList = new int[] {1,2,3,2,4};
-
-    //                 // }
-    //                 // if (monsHP <= 10000000){
-    //                 //     {
-    //                 //         skillList = new int[] {1,2,3,2};
-    //                 //     }
-    //                 // }
-
-    //                 // }
-    //                 break;
-    //         }
-    //     }
-    // }
 
     private void doPriorityAttack(string[] monsterList)
     {

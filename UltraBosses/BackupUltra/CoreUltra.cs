@@ -44,7 +44,7 @@ public class CoreUltra
         new Option<string>(
             " ",
             "Mode Explanation [player2]",
-            "player2:\r\nclass: LC, QCM, SC, CaV, VDK\r\nweap: Elysium, Valiance, Lacerate, Dauntless\r\ncape: Lament, Absolution, Penitence, Vainglory\r\nhelm: Wizard, Forge, Luck, Anima",
+            "player2:\r\nclass: QCM, SC, CaV, VDK\r\nweap: Elysium, Valiance, Lacerate, Dauntless\r\ncape: Lament, Absolution, Penitence, Vainglory\r\nhelm: Wizard, Forge, Luck, Anima",
             "click here"
         ),
         new Option<string>(
@@ -1337,10 +1337,10 @@ public class CoreUltra
                 //     "Scroll of Enrage"
                 // );
                 equipAllNeeded(
-                    "LightCaster",
-                    Bot.Config.Get<string>("Elysium"),
-                    Bot.Config.Get<string>("Lament"),
-                    Bot.Config.Get<string>("WizHelm"),
+                    "Verus DoomKnight",
+                    Bot.Config.Get<string>("Dauntless"),
+                    Bot.Config.Get<string>("Vainglory"),
+                    Bot.Config.Get<string>("AnimaHelm"),
                     "Scroll of Enrage"
                 );
                 break;

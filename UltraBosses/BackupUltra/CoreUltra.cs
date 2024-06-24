@@ -1394,7 +1394,7 @@ public class CoreUltra
                 );
                 break;
             case 3:
-                monsPriorityID = "2";
+                monsPriorityID = "2,1,3";
                 skillList = new int[] { 1, 2, 3, 4 };
                 equipAllNeeded(
                     "Lord Of Order",
@@ -1405,7 +1405,7 @@ public class CoreUltra
                 );
                 break;
             case 4:
-                monsPriorityID = "2";
+                monsPriorityID = "2,1,3";
                 skillList = new int[] { 1, 2, 3, 4 }; // ravenous
                 equipAllNeeded(
                     "ArchPaladin",

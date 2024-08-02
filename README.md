@@ -3,7 +3,7 @@ Put scripts under Army folder. I modified the CoreArmyLite so this is a bit diff
 
 Edit and fill fields player name, weap, helm, cape
 
-The client crashes when stopping the script on Darkon, and I don't know why. There are no issues when stopping it on other ultras. So, either keep it running until it stops by itself or just don't run Darkon (you can delete 'cUltra.UltraDarkon();' in 0AllUltras.cs) .
+(SOLVED I GUESS) The client crashes when stopping the script on Darkon, and I don't know why. There are no issues when stopping it on other ultras. So, either keep it running until it stops by itself or just don't run Darkon (you can delete 'cUltra.UltraDarkon();' in 0AllUltras.cs) .
 
 Will good if you can refactor and make it better so it can go public.
 

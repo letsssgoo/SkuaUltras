@@ -32,15 +32,15 @@ public class AllUltra
 
         cUltra.InitUltra();
 
-        // cUltra.UltraTyndarius();
-        // cUltra.UltraEngineer();
-        // cUltra.UltraWarden();
-        // cUltra.UltraEzrajal();
-        // cUltra.ChampionDrakath();
-        // cUltra.UltraDage();
-        // cUltra.UltraNulgath();
-        // cUltra.UltraDrago();
-        // cUltra.UltraSpeaker();
+        cUltra.UltraTyndarius();
+        cUltra.UltraEngineer();
+        cUltra.UltraWarden();
+        cUltra.UltraEzrajal();
+        cUltra.ChampionDrakath();
+        cUltra.UltraDage();
+        cUltra.UltraNulgath();
+        cUltra.UltraDrago();
+        cUltra.UltraSpeaker();
         cUltra.UltraDarkon();
 
         // Core.SetOptions(false);

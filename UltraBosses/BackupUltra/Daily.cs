@@ -1,4 +1,5 @@
 //cs_include Scripts/CoreBots.cs
+//cs_include Scripts/CoreBots.cs
 //cs_include Scripts/CoreFarms.cs
 //cs_include Scripts/CoreAdvanced.cs
 //cs_include Scripts/CoreStory.cs
@@ -32,16 +33,10 @@ public class AllUltra
 
         cUltra.InitUltra();
 
-        // cUltra.UltraTyndarius();
-        // cUltra.UltraEngineer();
-        // cUltra.UltraWarden();
-        // cUltra.UltraEzrajal();
-        // cUltra.ChampionDrakath();
-        // cUltra.UltraDage();
-        // cUltra.UltraNulgath();
-        // cUltra.UltraDrago();
-        // cUltra.UltraSpeaker();
-        cUltra.UltraDarkon();
+        cUltra.UltraTyndarius();
+        cUltra.UltraEngineer();
+        cUltra.UltraWarden();
+        cUltra.UltraEzrajal();
 
         // Core.SetOptions(false);
     }

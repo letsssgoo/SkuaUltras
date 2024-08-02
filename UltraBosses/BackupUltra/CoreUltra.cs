@@ -109,6 +109,11 @@ public class CoreUltra
         PartyMembers = new[] { player1, player2, player3, player4 };
     }
 
+    public void scrollOfLifeSteal(){
+        if (!Core.CheckInventory("Scroll of Life Steal", 60))
+            Core.BuyItem("arcangrove", 211, "Scroll of Life Steal", 99);
+    }
+
     public void UltraTyndarius()
     {
         string bossId = "2";
@@ -119,48 +124,140 @@ public class CoreUltra
         string doneMsg = "tyndariusdone";
         string bossCell = "Boss";
         string bossPad = "Left";
-        string tempInv = "Ultra Avatar Tyndarius Defeated";
+        string item = "Ultra Avatar Tyndarius Defeated";
         int questId = 8245;
 
         initClass(UltraBosses.UltraTyndarius);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
+        Bot.Events.PlayerAFK += PlayerAFK;
 
-        killWithArmy(
-            UltraBosses.UltraTyndarius,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
+        scrollOfLifeSteal();
 
-        void skillAction()
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (classUsed != "Lord Of Order")
+                if (!Bot.Player.Alive)
                 {
-                    if (!Bot.Target.HasActiveAura("Focus"))
-                        Bot.Skills.UseSkill(5);
+                    Bot.Sleep(500);
+                    continue;
                 }
-                if (
-                    (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                    && belowHealthPercentage(70)
-                )
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (classUsed != "Lord Of Order")
+                        {
+                            if (!Bot.Target.HasActiveAura("Focus"))
+                                Bot.Skills.UseSkill(5);
+                        }
+                        if (
+                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                            && belowHealthPercentage(70)
+                        )
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
+        // killWithArmy(
+        //     UltraBosses.UltraTyndarius,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (classUsed != "Lord Of Order")
+        //         {
+        //             if (!Bot.Target.HasActiveAura("Focus"))
+        //                 Bot.Skills.UseSkill(5);
+        //         }
+        //         if (
+        //             (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+        //             && belowHealthPercentage(70)
+        //         )
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     public void UltraWarden()
@@ -173,49 +270,142 @@ public class CoreUltra
         string doneMsg = "wardendone";
         string bossCell = "r2";
         string bossPad = "Left";
-        string tempInv = "Ultra Warden Defeated";
+        string item = "Ultra Warden Defeated";
         int questId = 8153;
 
         initClass(UltraBosses.UltraWarden);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
+        Bot.Events.PlayerAFK += PlayerAFK;
 
-        killWithArmy(
-            UltraBosses.UltraWarden,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
+        scrollOfLifeSteal();
 
-        void skillAction()
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (classUsed == "Legion Revenant" || classUsed == "LightCaster")
+                if (!Bot.Player.Alive)
                 {
-                    if (!Bot.Target.HasActiveAura("Focus"))
-                        Bot.Skills.UseSkill(5);
-                    Bot.Skills.UseSkill(3);
+                    Bot.Sleep(500);
+                    continue;
                 }
-                if (
-                    (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                    && belowHealthPercentage(70)
-                )
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (classUsed == "Legion Revenant" || classUsed == "LightCaster")
+                        {
+                            if (!Bot.Target.HasActiveAura("Focus"))
+                                Bot.Skills.UseSkill(5);
+                            Bot.Skills.UseSkill(3);
+                        }
+                        if (
+                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                            && belowHealthPercentage(70)
+                        )
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
+        // killWithArmy(
+        //     UltraBosses.UltraWarden,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (classUsed == "Legion Revenant" || classUsed == "LightCaster")
+        //         {
+        //             if (!Bot.Target.HasActiveAura("Focus"))
+        //                 Bot.Skills.UseSkill(5);
+        //             Bot.Skills.UseSkill(3);
+        //         }
+        //         if (
+        //             (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+        //             && belowHealthPercentage(70)
+        //         )
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     private bool shouldAttack = true;
@@ -230,7 +420,7 @@ public class CoreUltra
         string doneMsg = "ezrajaldone";
         string bossCell = "r2";
         string bossPad = "Left";
-        string tempInv = "Ultra Ezrajal Defeated";
+        string item = "Ultra Ezrajal Defeated";
         int questId = 8152;
 
         initClass(UltraBosses.UltraEzrajal);
@@ -238,53 +428,161 @@ public class CoreUltra
         string classUsed = Bot.Player.CurrentClass!.Name;
 
         Bot.Events.CounterAttack += _KillEzrajal;
-        killWithArmy(
-            UltraBosses.UltraEzrajal,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
-        Bot.Events.CounterAttack -= _KillEzrajal;
-        void skillAction()
+
+
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                if (!shouldAttack)
+                if (!Bot.Player.Alive)
                 {
-                    if (
-                        (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                        && belowHealthPercentage(70)
-                    )
-                    {
-                        Bot.Skills.UseSkill(2);
-                    }
+                    Bot.Sleep(500);
                     continue;
                 }
-                Bot.Skills.UseSkill(skillList[i]);
-                if (classUsed == "ArchPaladin" || classUsed == "Legion Revenant")
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
-                    if (!Bot.Target.HasActiveAura("Focus"))
-                        Bot.Skills.UseSkill(5);
+                    if (sArmy.sendDone())
+                        needSendDone = false;
                 }
-
-                if (
-                    (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                    && belowHealthPercentage(70)
-                )
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if (!shouldAttack)
+                        {
+                            if (
+                                (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                                && belowHealthPercentage(70)
+                            )
+                            {
+                                Bot.Skills.UseSkill(2);
+                            }
+                            continue;
+                        }
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (classUsed == "ArchPaladin" || classUsed == "Legion Revenant")
+                        {
+                            if (!Bot.Target.HasActiveAura("Focus"))
+                                Bot.Skills.UseSkill(5);
+                        }
+
+                        if (
+                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                            && belowHealthPercentage(70)
+                        )
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+        Bot.Events.CounterAttack -= _KillEzrajal;
+
+        // killWithArmy(
+        //     UltraBosses.UltraEzrajal,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+        // Bot.Events.CounterAttack -= _KillEzrajal;
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         if (!shouldAttack)
+        //         {
+        //             if (
+        //                 (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+        //                 && belowHealthPercentage(70)
+        //             )
+        //             {
+        //                 Bot.Skills.UseSkill(2);
+        //             }
+        //             continue;
+        //         }
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (classUsed == "ArchPaladin" || classUsed == "Legion Revenant")
+        //         {
+        //             if (!Bot.Target.HasActiveAura("Focus"))
+        //                 Bot.Skills.UseSkill(5);
+        //         }
+
+        //         if (
+        //             (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+        //             && belowHealthPercentage(70)
+        //         )
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
 
         void _KillEzrajal(bool faded)
         {
@@ -312,47 +610,140 @@ public class CoreUltra
         string doneMsg = "engineerdone";
         string bossCell = "r2";
         string bossPad = "Left";
-        string tempInv = "Ultra Engineer Defeated";
+        string item = "Ultra Engineer Defeated";
         int questId = 8154;
 
         initClass(UltraBosses.UltraEngineer);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
 
-        killWithArmy(
-            UltraBosses.UltraEngineer,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
-        void skillAction()
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+                if (!Bot.Player.Alive)
                 {
-                    if (!Bot.Target.HasActiveAura("Focus"))
-                        Bot.Skills.UseSkill(5);
+                    Bot.Sleep(500);
+                    continue;
                 }
-                if (
-                    (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                    && belowHealthPercentage(70)
-                )
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+                        {
+                            if (!Bot.Target.HasActiveAura("Focus"))
+                                Bot.Skills.UseSkill(5);
+                        }
+                        if (
+                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                            && belowHealthPercentage(70)
+                        )
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
+        // killWithArmy(
+        //     UltraBosses.UltraEngineer,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+        //         {
+        //             if (!Bot.Target.HasActiveAura("Focus"))
+        //                 Bot.Skills.UseSkill(5);
+        //         }
+        //         if (
+        //             (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+        //             && belowHealthPercentage(70)
+        //         )
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     public void ChampionDrakath()
@@ -365,46 +756,137 @@ public class CoreUltra
         string doneMsg = "championdrakathdone";
         string bossCell = "r2";
         string bossPad = "Left";
-        string tempInv = "Champion Drakath Defeated";
+        string item = "Champion Drakath Defeated";
         int questId = 8300;
 
         initClass(UltraBosses.Championdrakath);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
 
-        killWithArmy(
-            UltraBosses.Championdrakath,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
+        Bot.Events.PlayerAFK += PlayerAFK;
 
-        void skillAction()
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (classUsed == "Legion Revenant" && drakathHealthCheck(GetMonsterHP("1")))
+                if (!Bot.Player.Alive)
                 {
-                    Bot.Skills.UseSkill(5);
-                    Bot.Skills.UseSkill(5);
-                    Bot.Skills.UseSkill(5);
+                    Bot.Sleep(500);
+                    continue;
                 }
-                if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (classUsed == "Legion Revenant" && drakathHealthCheck(GetMonsterHP("1")))
+                        {
+                            Bot.Skills.UseSkill(5);
+                            Bot.Skills.UseSkill(5);
+                            Bot.Skills.UseSkill(5);
+                        }
+                        if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
+        // killWithArmy(
+        //     UltraBosses.Championdrakath,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (classUsed == "Legion Revenant" && drakathHealthCheck(GetMonsterHP("1")))
+        //         {
+        //             Bot.Skills.UseSkill(5);
+        //             Bot.Skills.UseSkill(5);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //         if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     public void UltraDage()
@@ -417,28 +899,106 @@ public class CoreUltra
         string doneMsg = "ultradagedone";
         string bossCell = "Boss";
         string bossPad = "Right";
-        string tempInv = "Dage the Dark Lord Defeated";
+        string item = "Dage the Dark Lord Defeated";
         int questId = 8547;
 
         initClass(UltraBosses.UltraDage);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
         Bot.Events.RunToArea += Event_RunToArea;
-        killWithArmy(
-            UltraBosses.UltraDage,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
+
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
+        {
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
+            {
+                if (!Bot.Player.Alive)
+                {
+                    Bot.Sleep(500);
+                    continue;
+                }
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
+                {
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (classUsed == "Legion Revenant" && !Bot.Target.HasActiveAura("Focus"))
+                        {
+                            Bot.Skills.UseSkill(5);
+                        }
+                        if (
+                            (classUsed == "Verus DoomKnight" || classUsed == "Quantum Chronomancer")
+                            && belowHealthPercentage(70)
+                        )
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
         Bot.Events.RunToArea -= Event_RunToArea;
+        Bot.Sleep(1000);
 
         void Event_RunToArea(string zone)
         {
@@ -478,25 +1038,42 @@ public class CoreUltra
             }
         }
 
-        void skillAction()
-        {
-            for (int i = 0; i < skillList.Length; i++)
-            {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (classUsed == "Legion Revenant" && !Bot.Target.HasActiveAura("Focus"))
-                {
-                    Bot.Skills.UseSkill(5);
-                }
-                if (
-                    (classUsed == "Verus DoomKnight" || classUsed == "Quantum Chronomancer")
-                    && belowHealthPercentage(70)
-                )
-                {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
-                }
-            }
-        }
+        // killWithArmy(
+        //     UltraBosses.UltraDage,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+        
+
+
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (classUsed == "Legion Revenant" && !Bot.Target.HasActiveAura("Focus"))
+        //         {
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //         if (
+        //             (classUsed == "Verus DoomKnight" || classUsed == "Quantum Chronomancer")
+        //             && belowHealthPercentage(70)
+        //         )
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     public void UltraNulgath()
@@ -509,44 +1086,136 @@ public class CoreUltra
         string doneMsg = "ultranulgathdone";
         string bossCell = "Boss";
         string bossPad = "Right";
-        string tempInv = "Nulgath the Archfiend Defeated?";
+        string item = "Nulgath the Archfiend Defeated?";
         int questId = 8692;
 
         initClass(UltraBosses.UltraNulgath);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
-        killWithArmy(
-            UltraBosses.UltraNulgath,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
 
-        void skillAction()
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (
-                    (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
-                    && !Bot.Target.HasActiveAura("Focus")
-                )
-                    Bot.Skills.UseSkill(5);
-                if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                if (!Bot.Player.Alive)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    Bot.Sleep(500);
+                    continue;
+                }
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
+                {
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (
+                            (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+                            && !Bot.Target.HasActiveAura("Focus")
+                        )
+                            Bot.Skills.UseSkill(5);
+                        if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
+
+        // killWithArmy(
+        //     UltraBosses.UltraNulgath,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (
+        //             (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+        //             && !Bot.Target.HasActiveAura("Focus")
+        //         )
+        //             Bot.Skills.UseSkill(5);
+        //         if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     public void UltraDrago()
@@ -559,44 +1228,136 @@ public class CoreUltra
         string doneMsg = "ultradragodone";
         string bossCell = "Boss";
         string bossPad = "Right";
-        string tempInv = "Drago Dethroned";
+        string item = "Drago Dethroned";
         int questId = 8397;
 
         initClass(UltraBosses.UltraDrago);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
-        killWithArmy(
-            UltraBosses.UltraDrago,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            tempInv,
-            skillAction
-        );
 
-        void skillAction()
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
         {
-            for (int i = 0; i < skillList.Length; i++)
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
             {
-                Bot.Skills.UseSkill(skillList[i]);
-                if (
-                    (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
-                    && !Bot.Target.HasActiveAura("Focus")
-                )
-                    Bot.Skills.UseSkill(5);
-                if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                if (!Bot.Player.Alive)
                 {
-                    Bot.Skills.UseSkill(2);
-                    Bot.Skills.UseSkill(5);
+                    Bot.Sleep(500);
+                    continue;
+                }
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
+                {
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                        if (
+                            (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+                            && !Bot.Target.HasActiveAura("Focus")
+                        )
+                            Bot.Skills.UseSkill(5);
+                        if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                        {
+                            Bot.Skills.UseSkill(2);
+                            Bot.Skills.UseSkill(5);
+                        }
+                    }
                 }
             }
+            catch { }
         }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
+
+        // killWithArmy(
+        //     UltraBosses.UltraDrago,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     tempInv,
+        //     skillAction
+        // );
+
+        // void skillAction()
+        // {
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //         if (
+        //             (classUsed == "Legion Revenant" || classUsed == "ArchPaladin")
+        //             && !Bot.Target.HasActiveAura("Focus")
+        //         )
+        //             Bot.Skills.UseSkill(5);
+        //         if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+        //         {
+        //             Bot.Skills.UseSkill(2);
+        //             Bot.Skills.UseSkill(5);
+        //         }
+        //     }
+        // }
     }
 
     public void UltraSpeaker()
@@ -609,7 +1370,7 @@ public class CoreUltra
         string doneMsg = "ultraspeakerdone";
         string bossCell = "Boss";
         string bossPad = "Left";
-        string inv = "The First Speaker Silenced";
+        string item = "The First Speaker Silenced";
         int questId = 9173;
 
         initClass(UltraBosses.UltraSpeaker);
@@ -617,35 +1378,134 @@ public class CoreUltra
         string classUsed = Bot.Player.CurrentClass!.Name;
         Bot.Events.ExtensionPacketReceived -= UltraSpeakerTodo;
         Bot.Events.ExtensionPacketReceived += UltraSpeakerTodo;
-        killWithArmy(
-            UltraBosses.UltraSpeaker,
-            bossId,
-            cellMsg,
-            clientName,
-            mapName,
-            waitIn,
-            doneMsg,
-            bossCell,
-            bossPad,
-            questId,
-            inv,
-            skillAction
-        );
+        
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        scrollOfLifeSteal();
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = monsPriorityID.Split(',');
+
+        setClient(clientName);
+        sArmy.ClearLogFile();
+
+        Core.Join(mapName);
+        // waitForParty(waitIn, "Spawn");
+        sArmy.waitForPartyCell("Enter", "Spawn");
+        waitForSignal(cellMsg, waitIn);
+        sArmy.registerMessage(doneMsg, false);
+
+        // string classUsed = Bot.Player.CurrentClass!.Name;
+
+        Bot.Skills.UseSkill(1);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(2);
+        Bot.Sleep(1000);
+        Bot.Skills.UseSkill(3);
+
+        if (Bot.Map.Name.ToLower() == mapName)
+        {
+            if (Bot.Player.CurrentClass!.Name != "ArchPaladin")
+                Bot.Sleep(200);
+            Core.Jump(bossCell, bossPad);
+            Bot.Skills.UseSkill(2);
+            Bot.Player.SetSpawnPoint();
+        }
+
+        bool needSendDone = true;
+        int countCheck = 0;
+        Core.Logger($"starting {mapName}");
+        bool fight = true;
+        int countRestart = 0;
+
+        while (!Bot.ShouldExit && fight)
+        {
+            try
+            {
+                if (!Bot.Player.Alive)
+                {
+                    Bot.Sleep(500);
+                    continue;
+                }
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
+                {
+                    if (sArmy.sendDone())
+                        needSendDone = false;
+                }
+                if (!needSendDone && sArmy.isDone() && countCheck % 5 == 0)
+                {
+                    break;
+                }
+                countCheck++;
+
+                doPriorityAttack(monsList);
+                // if(forceSkill){
+                //     while (!Bot.ShouldExit && !Bot.Skills.CanUseSkill(skillToForce))
+                //     {
+                //         // await Task.Delay(10);
+                //         Bot.Sleep(5);
+                //     }
+                //     Bot.Skills.UseSkill(skillToForce);
+                //     Bot.Skills.UseSkill(skillToForce);
+                //     Bot.Skills.UseSkill(skillToForce);
+                //     forceSkill = false;
+                // }
+                if (Bot.Player.HasTarget)
+                {
+                    if (GetMonsterHP("1") >= 9900000){
+                        speakerCounter = 0;
+                        forceSkill = false;
+                    }
+                    for (int i = 0; i < skillList.Length; i++)
+                    {
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
+                    }
+                    Bot.Skills.UseSkill(2);
+                }
+            }
+            catch { }
+        }
+        Core.Jump(waitIn);
+        waitForSignal($"{cellMsg}Done", waitIn);
+        Core.Logger(doneMsg);
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Sleep(1000);
+
         Bot.Events.ExtensionPacketReceived -= UltraSpeakerTodo;
 
-        void skillAction()
-        {
-            if (GetMonsterHP("1") >= 9900000)
-                speakerCounter = 0;
-            for (int i = 0; i < skillList.Length; i++)
-            {
-                Bot.Skills.UseSkill(skillList[i]);
-            }
-            Bot.Skills.UseSkill(2);
-        }
+        
+        // killWithArmy(
+        //     UltraBosses.UltraSpeaker,
+        //     bossId,
+        //     cellMsg,
+        //     clientName,
+        //     mapName,
+        //     waitIn,
+        //     doneMsg,
+        //     bossCell,
+        //     bossPad,
+        //     questId,
+        //     inv,
+        //     skillAction
+        // );
+
+        // void skillAction()
+        // {
+        //     if (GetMonsterHP("1") >= 9900000)
+        //         speakerCounter = 0;
+        //     for (int i = 0; i < skillList.Length; i++)
+        //     {
+        //         Bot.Skills.UseSkill(skillList[i]);
+        //     }
+        //     Bot.Skills.UseSkill(2);
+        // }
     }
 
-    public async void UltraDarkon()
+    public void UltraDarkon()
     {
         string bossId = "1";
         string cellMsg = "inDarkonEnterCell";
@@ -655,7 +1515,7 @@ public class CoreUltra
         string doneMsg = "ultradarkondone";
         string bossCell = "r2";
         string bossPad = "Left";
-        string tempInv = "Darkon the Conductor Defeated";
+        string item = "Darkon the Conductor Defeated";
         int questId = 8746;
 
         // Bot.Events.ExtensionPacketReceived -= DarkonHandler;
@@ -715,7 +1575,7 @@ public class CoreUltra
                     Bot.Sleep(500);
                     continue;
                 }
-                if ((Bot.TempInv.Contains(tempInv) || Bot.Inventory.Contains(tempInv)) && needSendDone)
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
                     if (sArmy.sendDone())
                         needSendDone = false;
@@ -737,7 +1597,8 @@ public class CoreUltra
                             Bot.Skills.UseSkill(4);
                         if (Bot.Target.HasActiveAura("Focus"))
                             Bot.Skills.UseSkill(5);
-                        Bot.Skills.UseSkill(skillList[i]);
+                        if(Bot.Skills.CanUseSkill(skillList[i]))
+                            Bot.Skills.UseSkill(skillList[i]);
                         Bot.Skills.UseSkill(2);
 
                     }
@@ -956,8 +1817,12 @@ public class CoreUltra
         return outputReturn;
     }
 
+    private bool forceSkill = false;
+    private int skillToForce;
     private void ForceSkill(int skill, int wait = 0)
     {
+        // forceSkill = true;
+        // skillToForce = skill;
         if (!Bot.Player.Alive)
             return;
         if (Bot.Player.HasTarget)
@@ -1700,7 +2565,7 @@ public class CoreUltra
                 );
                 break;
             case 4:
-                monsPriorityID = "1,2,3";
+                monsPriorityID = "1,3,2";
                 skillList = new int[] { 1, 2, 3, 4 };
                 equipAllNeeded(
                     "ArchPaladin",
@@ -1719,7 +2584,7 @@ public class CoreUltra
         switch (optionClass)
         {
             case 1:
-                skillList = new int[] { 1, 2, 3, 4, 5 };
+                skillList = new int[] { 2, 3, 4 };
                 equipAllNeeded(
                     "Legion Revenant",
                     Bot.Config.Get<string>("Arcana"),
@@ -1730,7 +2595,7 @@ public class CoreUltra
                 
                 break;
             case 2:
-                skillList = new int[] { 2, 3, 4 };
+                skillList = new int[] { 1, 2, 3, 4 };
                 equipAllNeeded(
                     "Verus DoomKnight",
                     Bot.Config.Get<string>("Dauntless"),
@@ -1765,34 +2630,11 @@ public class CoreUltra
     private void ultraDarkonClass(int optionClass)
     {
         monsPriorityID = "1";
+        string[] pots;
         switch (optionClass)
         {
             case 1:
                 skillList = new int[] { 1, 2, 3, 4, 5 };
-                equipAllNeeded(
-                    "LightCaster",
-                    Bot.Config.Get<string>("Elysium"),
-                    Bot.Config.Get<string>("Lament"),
-                    Bot.Config.Get<string>("WizHelm"),
-                    "Scroll of Enrage"
-                );
-                // equipAllNeeded(
-                //     "Legion Revenant",
-                //     Bot.Config.Get<string>("Arcana"),
-                //     Bot.Config.Get<string>("Lament"),
-                //     Bot.Config.Get<string>("WizHelm"),
-                //     "Scroll of Enrage"
-                // );
-                break;
-            case 2:
-                skillList = new int[] { 1, 2, 3, 4, 5 };
-                equipAllNeeded(
-                    "Verus DoomKnight",
-                    Bot.Config.Get<string>("Dauntless"),
-                    Bot.Config.Get<string>("Vainglory"),
-                    Bot.Config.Get<string>("AnimaHelm"),
-                    "Potent Honor Potion"
-                );
                 // equipAllNeeded(
                 //     "LightCaster",
                 //     Bot.Config.Get<string>("Elysium"),
@@ -1800,26 +2642,60 @@ public class CoreUltra
                 //     Bot.Config.Get<string>("WizHelm"),
                 //     "Scroll of Enrage"
                 // );
+                equipAllNeeded(
+                    "Legion Revenant",
+                    Bot.Config.Get<string>("Arcana"),
+                    Bot.Config.Get<string>("Lament"),
+                    Bot.Config.Get<string>("WizHelm"),
+                    "Scroll of Enrage",
+                    new string[] {"Sage Tonic", "Potent Malevolance Elixir"}
+                );
+                break;
+            case 2:
+                skillList = new int[] { 1, 2, 3, 4, 5 };
+                // equipAllNeeded(
+                //     "Verus DoomKnight",
+                //     Bot.Config.Get<string>("Dauntless"),
+                //     Bot.Config.Get<string>("Vainglory"),
+                //     Bot.Config.Get<string>("AnimaHelm"),
+                //     "Potent Honor Potion"
+                // );
+                equipAllNeeded(
+                    "LightCaster",
+                    Bot.Config.Get<string>("Elysium"),
+                    Bot.Config.Get<string>("Lament"),
+                    Bot.Config.Get<string>("WizHelm"),
+                    "Scroll of Enrage",
+                    new string[] {"Sage Tonic", "Potent Malevolance Elixir"}
+                );
                 break;
             case 3:
                 skillList = new int[] { 1, 2, 3, 4, 5 };
+                // equipAllNeeded(
+                //     "Lord Of Order",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Absolution"),
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Enrage"
+                // );
                 equipAllNeeded(
                     "Lord Of Order",
-                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("AweBlast"),
                     Bot.Config.Get<string>("Absolution"),
                     Bot.Config.Get<string>("LuckHelm"),
-                    "Scroll of Enrage"
+                    "Scroll of Life Steal",
+                    new string[] {"Fate Tonic", "Potent Battle Elixir"}
                 );
                 break;
             case 4:
                 skillList = new int[] { 1, 2, 3, 4, 5 };
-                equipAllNeeded(
-                    "Legion Revenant",
-                    Bot.Config.Get<string>("Arcana"),
-                    Bot.Config.Get<string>("Avarice"),
-                    Bot.Config.Get<string>("PneumaHelm"),
-                    "Scroll of Enrage"
-                );
+                // equipAllNeeded(
+                //     "Legion Revenant",
+                //     Bot.Config.Get<string>("Arcana"),
+                //     Bot.Config.Get<string>("Avarice"),
+                //     Bot.Config.Get<string>("PneumaHelm"),
+                //     "Scroll of Enrage"
+                // );
                 // skillList = new int[] { 1, 2, 3, 2, 5 };
                 // equipAllNeeded(
                 //     "Frostval Barbarian",
@@ -1829,13 +2705,14 @@ public class CoreUltra
                 //     "Scroll of Enrage"
                 // );
                 // skillList = new int[] { 1, 2, 3, 2, 4 };
-                // equipAllNeeded(
-                //     "StoneCrusher",
-                //     Bot.Config.Get<string>("Valiance"),
-                //     Bot.Config.Get<string>("Absolution"),
-                //     Bot.Config.Get<string>("WizHelm"),
-                //     "Scroll of Enrage"
-                // );
+                equipAllNeeded(
+                    "StoneCrusher",
+                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("Absolution"),
+                    Bot.Config.Get<string>("WizHelm"),
+                    "Scroll of Enrage",
+                    new string[] {"Sage Tonic", "Potent Malevolance Elixir"}
+                );
                 break;
         }
     }
@@ -1846,7 +2723,7 @@ public class CoreUltra
         string cape,
         string helm,
         string scroll,
-        string pots = null
+        string[] pots = null
     )
     {
         Core.Equip(Bot.Config.Get<string>("SafeClass"));
@@ -1856,6 +2733,12 @@ public class CoreUltra
         Core.Equip(weapon);
         Core.Equip(cape);
         Core.Equip(helm);
+        if (pots != null){
+            foreach (string pot in pots){
+                Bot.Sleep(1000);
+                _equipAndDrinkConsumable(pot);
+            }
+        }
         Core.Equip(scroll);
     }
 

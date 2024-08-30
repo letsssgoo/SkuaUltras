@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 using Skua.Core.Interfaces;
 using Skua.Core.Models;
 using Skua.Core.Models.Items;
+using Skua.Core.Scripts;
+
 
 public class CoreUltra
 {
@@ -28,6 +30,7 @@ public class CoreUltra
     private string monsPriorityID;
     private DateTime targetTime;
     private bool waitTaunt = false;
+    Dictionary<string, int> playersHP = new Dictionary<string, int>(); 
 
     public List<IOption> StartOptions = new List<IOption>()
     {
@@ -107,7 +110,20 @@ public class CoreUltra
         sArmy.setLogName($"{OptionsStorage}Logging");
         setPlayerName();
         PartyMembers = new[] { player1, player2, player3, player4 };
+
+        Bot.Events.ExtensionPacketReceived -= PlayersHP;
+        Bot.Events.ExtensionPacketReceived += PlayersHP;
+
+        Bot.Events.ScriptStopping += Events_ScriptStopping;
+
+        bool Events_ScriptStopping(Exception? e)
+        {
+            Bot.Events.ExtensionPacketReceived -= PlayersHP;
+            return true;
+        }
+
     }
+
 
     public void scrollOfLifeSteal(){
         if (!Core.CheckInventory("Scroll of Life Steal", 60))
@@ -204,14 +220,14 @@ public class CoreUltra
                             if (!Bot.Target.HasActiveAura("Focus"))
                                 Bot.Skills.UseSkill(5);
                         }
-                        if (
-                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                            && belowHealthPercentage(70)
-                        )
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if (
+                        //     (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                        //     && belowHealthPercentage(70)
+                        // )
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -351,14 +367,14 @@ public class CoreUltra
                                 Bot.Skills.UseSkill(5);
                             Bot.Skills.UseSkill(3);
                         }
-                        if (
-                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                            && belowHealthPercentage(70)
-                        )
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if (
+                        //     (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                        //     && belowHealthPercentage(70)
+                        // )
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -516,14 +532,14 @@ public class CoreUltra
                                 Bot.Skills.UseSkill(5);
                         }
 
-                        if (
-                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                            && belowHealthPercentage(70)
-                        )
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if (
+                        //     (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                        //     && belowHealthPercentage(70)
+                        // )
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -691,14 +707,14 @@ public class CoreUltra
                             if (!Bot.Target.HasActiveAura("Focus"))
                                 Bot.Skills.UseSkill(5);
                         }
-                        if (
-                            (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
-                            && belowHealthPercentage(70)
-                        )
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if (
+                        //     (classUsed == "Lord Of Order" || classUsed == "ArchPaladin")
+                        //     && belowHealthPercentage(70)
+                        // )
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -838,11 +854,11 @@ public class CoreUltra
                             Bot.Skills.UseSkill(5);
                             Bot.Skills.UseSkill(5);
                         }
-                        if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -980,14 +996,14 @@ public class CoreUltra
                         {
                             Bot.Skills.UseSkill(5);
                         }
-                        if (
-                            (classUsed == "Verus DoomKnight" || classUsed == "Quantum Chronomancer")
-                            && belowHealthPercentage(70)
-                        )
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if (
+                        //     (classUsed == "Verus DoomKnight" || classUsed == "Quantum Chronomancer")
+                        //     && belowHealthPercentage(70)
+                        // )
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -1167,11 +1183,11 @@ public class CoreUltra
                             && !Bot.Target.HasActiveAura("Focus")
                         )
                             Bot.Skills.UseSkill(5);
-                        if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -1309,11 +1325,11 @@ public class CoreUltra
                             && !Bot.Target.HasActiveAura("Focus")
                         )
                             Bot.Skills.UseSkill(5);
-                        if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
-                        {
-                            Bot.Skills.UseSkill(2);
-                            Bot.Skills.UseSkill(5);
-                        }
+                        // if ((classUsed != "Legion Revenant") && belowHealthPercentage(70))
+                        // {
+                        //     Bot.Skills.UseSkill(2);
+                        //     Bot.Skills.UseSkill(5);
+                        // }
                     }
                 }
             }
@@ -1376,8 +1392,8 @@ public class CoreUltra
         initClass(UltraBosses.UltraSpeaker);
 
         string classUsed = Bot.Player.CurrentClass!.Name;
-        Bot.Events.ExtensionPacketReceived -= UltraSpeakerTodo;
-        Bot.Events.ExtensionPacketReceived += UltraSpeakerTodo;
+        //Bot.Events.ExtensionPacketReceived -= UltraSpeakerTodo;
+        //Bot.Events.ExtensionPacketReceived += UltraSpeakerTodo;
         
         Bot.Events.PlayerAFK += PlayerAFK;
 
@@ -1430,6 +1446,14 @@ public class CoreUltra
                     Bot.Sleep(500);
                     continue;
                 }
+                int playerPositionX = Bot.Player.X;
+                if (
+                    playerPositionX != 100
+                    && Bot.Map.Name.ToLower() == "ultraspeaker"
+                )
+                {
+                    Bot.Flash.Call("walkTo", 100, 321, 8);
+                }
                 if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)) && needSendDone)
                 {
                     if (sArmy.sendDone())
@@ -1453,6 +1477,7 @@ public class CoreUltra
                 //     Bot.Skills.UseSkill(skillToForce);
                 //     forceSkill = false;
                 // }
+                
                 if (Bot.Player.HasTarget)
                 {
                     if (GetMonsterHP("1") >= 9900000){
@@ -1475,7 +1500,7 @@ public class CoreUltra
         Bot.Events.PlayerAFK -= PlayerAFK;
         Bot.Sleep(1000);
 
-        Bot.Events.ExtensionPacketReceived -= UltraSpeakerTodo;
+        //Bot.Events.ExtensionPacketReceived -= UltraSpeakerTodo;
 
         
         // killWithArmy(
@@ -1706,6 +1731,124 @@ public class CoreUltra
         Bot.Sleep(1000);
     }
 
+    private bool zoneA;
+    private bool zoneB;
+
+    public void QueenIona()
+    {
+        string bossId = "1";
+        string cellMsg = "inQueenIonaCell";
+        string clientName = "Queen Iona";
+        string mapName = "queeniona";
+        string waitIn = "Enter";
+        string bossCell = "r2";
+        string bossPad = "Left";
+        string item = "Lightning Diadem";
+        int questId = 9852;
+
+        Bot.Events.RunToArea += moveQueenIona;
+
+        Bot.Events.PlayerAFK += PlayerAFK;
+
+        Core.EnsureAccept(questId);
+
+        // initClass(whatUltra);
+
+        string[] monsList = bossId.Split(',');
+
+        setClient(clientName);
+        equipAllNeeded(
+            "Void Highlord",
+            Bot.Config.Get<string>("Dauntless"),
+            Bot.Config.Get<string>("Vainglory"),
+            Bot.Config.Get<string>("AnimaHelm")
+        );
+        Core.PrivateRoomNumber = 999999;
+        Core.Join(mapName);
+        Core.Jump(bossCell, bossPad);
+        Core.Logger($"starting {mapName}");
+        
+        Bot.Skills.StartAdvanced("1 | 2 | 4");
+
+        while (!Bot.ShouldExit)
+        {
+            try
+            {
+                if (!Bot.Player.Alive)
+                {
+                    Bot.Sleep(500);
+                    continue;
+                }
+                if ((Bot.TempInv.Contains(item) || Bot.Inventory.Contains(item)))
+                {
+                    break;
+                }
+
+                doPriorityAttack(monsList);
+                if (Bot.Player.HasTarget)
+                {
+                    Bot.Combat.Attack("*");
+                    bool posCharge = Bot.Self.HasActiveAura("Positive Charge");
+                    bool posChargeQ = Bot.Self.HasActiveAura("Positive Charge?");
+                    bool negCharge = Bot.Self.HasActiveAura("Negative Charge");
+                    bool negChargeQ = Bot.Self.HasActiveAura("Negative Charge?");
+                    if (zoneA){
+
+                        if (posCharge || negChargeQ){
+                            _walkFlash((591, 736), (360, 372));
+                            zoneA = false;
+                        }
+                        if (negCharge || posChargeQ){
+                            _walkFlash((203, 364), (380, 420));
+                            zoneA = false;
+                        }
+                    }
+                    if (zoneB){
+
+                        if (posCharge || negChargeQ){
+                            _walkFlash((203, 364), (380, 420));
+                            zoneB = false;
+                        }
+                        if (negCharge || posChargeQ){
+                            _walkFlash((591, 736), (360, 372));
+                            zoneB = false;
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+        Core.Jump("Enter");
+        Core.Logger("Queen Iona done");
+        Bot.Events.PlayerAFK -= PlayerAFK;
+        Bot.Events.RunToArea -= moveQueenIona;
+        Bot.Sleep(1000);
+
+    }
+
+    void _walkFlash((int, int) X, (int, int) Y) => Bot.Flash.Call("walkTo", Bot.Random.Next(X.Item1, X.Item2), Bot.Random.Next(Y.Item1, Y.Item2), 8);
+
+    void moveQueenIona(string zone){
+            switch(zone.ToLower()){
+                case "a":
+                    zoneA = true;
+                    zoneB = false;
+                    
+                    break;
+                case "b":
+                    zoneA = false;
+                    zoneB = true;
+                    
+                    break;
+                default:
+                    zoneA = false;
+                    zoneB = false;
+                    break;
+                
+            }
+        }
+
+
     public void waitForParty(string? cell = null, string? pad = null)
     {
         int i = 0;
@@ -1837,6 +1980,57 @@ public class CoreUltra
             Bot.Skills.UseSkill(skill);
         }
 
+    }
+
+    private int healHealthLessThan;
+    private int skillHeal;
+
+    private void PlayersHP(dynamic packet)
+    {
+        string type = packet["params"].type;
+        dynamic data = packet["params"].dataObj;
+        if (type is not null and "json")
+        {
+            string cmd = data.cmd;
+            switch (cmd)
+            {
+                case "ct":
+                    var p = data.p;
+                    foreach (var item in p)
+                    {
+                        string username = item.Name;
+                        var userInfo = item.Value;
+                        if (userInfo.intHP != null)
+                        {
+                            int intHP = userInfo.intHP;
+                            if (playersHP.ContainsKey(username))
+                            {
+                                playersHP[username] = intHP; // Update the value if the key exists
+                            }
+                            else
+                            {
+                                playersHP.Add(username, intHP); // Add a new entry if the key does not exist
+                            }
+                            
+                            // if (intHP < healHealthLessThan){
+                            //     Core.Logger($"Username: {username}, intHP: {intHP}");
+                            //         Bot.Skills.UseSkill(skillHeal);
+                            //         Bot.Skills.UseSkill(skillHeal);
+                            //         Bot.Skills.UseSkill(skillHeal);
+                            //         Bot.Skills.UseSkill(skillHeal);
+                            // }
+                        }
+                    }
+                    foreach(KeyValuePair<string, int> ele in playersHP)
+                        {
+                            if(ele.Value <= healHealthLessThan){
+                                if(Bot.Skills.CanUseSkill(skillHeal))
+                                    Bot.Skills.UseSkill(skillHeal);
+                            }
+                        }
+                    break;
+            }
+        }
     }
 
     private int speakerCounter = 0;
@@ -2183,17 +2377,27 @@ public class CoreUltra
         switch (optionClass)
         {
             case 1:
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 2, 3, 4, 5 };
                 equipAllNeeded(
                     "Legion Revenant",
-                    Bot.Config.Get<string>("Arcana"),
-                    Bot.Config.Get<string>("Vainglory"),
+                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("Penitence"),
                     Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage"
                 );
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Legion Revenant",
+                //     Bot.Config.Get<string>("Arcana"),
+                //     Bot.Config.Get<string>("Vainglory"),
+                //     Bot.Config.Get<string>("WizHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 2, 3, 4, 5 };
                 // equipAllNeeded(
                 //     "Verus DoomKnight",
                 //     Bot.Config.Get<string>("Dauntless"),
@@ -2202,32 +2406,61 @@ public class CoreUltra
                 //     "Scroll of Enrage"
                 // );
                 equipAllNeeded(
-                    "Verus DoomKnight",
-                    Bot.Config.Get<string>("Dauntless"),
-                    Bot.Config.Get<string>("Vainglory"),
-                    Bot.Config.Get<string>("AnimaHelm"),
+                    "Chaos Avenger",
+                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                // equipAllNeeded(
+                //     "Verus DoomKnight",
+                //     Bot.Config.Get<string>("Dauntless"),
+                //     Bot.Config.Get<string>("Vainglory"),
+                //     Bot.Config.Get<string>("AnimaHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
-                skillList = new int[] { 1, 3, 4 }; // AweBlast
+                skillList = new int[] { 1, 3, 4, 2}; // AweBlast
                 equipAllNeeded(
                     "Lord Of Order",
                     Bot.Config.Get<string>("Valiance"),
-                    Bot.Config.Get<string>("Avarice"),
+                    Bot.Config.Get<string>("Penitence"), // try penitence/vain
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Life Steal"
                 );
+                // skillList = new int[] { 1, 3, 4 }; // AweBlast
+                // equipAllNeeded(
+                //     "Lord Of Order",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Avarice"), // try penitence/vain
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
                 skillList = new int[] { 1, 2, 3, 4 }; // ravenous
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Valiance"),
-                    Bot.Config.Get<string>("Avarice"),
+                    Bot.Config.Get<string>("Penitence"), // try penitence/vain
                     Bot.Config.Get<string>("LuckHelm"),
-                    "Scroll of Life Steal"
+                    "Scroll of Enrage"
                 );
+                // skillList = new int[] { 1, 2, 3, 4 }; // ravenous
+                // equipAllNeeded(
+                //     "ArchPaladin",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Avarice"), // try penitence/vain
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillHeal = 2;
+                healHealthLessThan = 2000;
                 break;
         }
     }
@@ -2238,40 +2471,78 @@ public class CoreUltra
         {
             case 1:
                 monsPriorityID = "1,3,2";
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Legion Revenant",
+                //     Bot.Config.Get<string>("Arcana"),
+                //     Bot.Config.Get<string>("Vainglory"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 2, 3, 4, 5 };
                 equipAllNeeded(
                     "Legion Revenant",
-                    Bot.Config.Get<string>("Arcana"),
-                    Bot.Config.Get<string>("Vainglory"),
-                    Bot.Config.Get<string>("ForgeHelm"),
+                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
                 monsPriorityID = "3,1,2";
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Quantum Chronomancer",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Lament"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 3, 4, 2}; 
                 equipAllNeeded(
-                    "Quantum Chronomancer",
+                    "Chaos Avenger",
                     Bot.Config.Get<string>("Valiance"),
-                    Bot.Config.Get<string>("Lament"),
-                    Bot.Config.Get<string>("ForgeHelm"),
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
                 monsPriorityID = "2,1,3";
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 3, 4 };
+                // equipAllNeeded(
+                //     "Lord Of Order",
+                //     Bot.Config.Get<string>("AweBlast"),
+                //     Bot.Config.Get<string>("Penitence"),
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillList = new int[] { 1, 3, 4, 2}; 
                 equipAllNeeded(
                     "Lord Of Order",
-                    Bot.Config.Get<string>("AweBlast"),
+                    Bot.Config.Get<string>("Valiance"),
                     Bot.Config.Get<string>("Penitence"),
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
                 monsPriorityID = "2,1,3";
-                skillList = new int[] { 1, 2, 3, 4 }; // ravenous
+                // skillList = new int[] { 1, 3, 4 }; // ravenous
+                // equipAllNeeded(
+                //     "ArchPaladin",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Penitence"),
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 2, 3, 4 };
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Valiance"),
@@ -2279,6 +2550,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
         }
     }
@@ -2289,37 +2562,75 @@ public class CoreUltra
         switch (optionClass)
         {
             case 1:
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Legion Revenant",
+                //     Bot.Config.Get<string>("Arcana"),
+                //     Bot.Config.Get<string>("Vainglory"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 2, 3, 4, 5 };
                 equipAllNeeded(
                     "Legion Revenant",
-                    Bot.Config.Get<string>("Arcana"),
-                    Bot.Config.Get<string>("Vainglory"),
-                    Bot.Config.Get<string>("ForgeHelm"),
+                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Quantum Chronomancer",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Lament"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillList = new int[] { 1, 3, 4, 2}; 
                 equipAllNeeded(
-                    "Quantum Chronomancer",
+                    "Chaos Avenger",
                     Bot.Config.Get<string>("Valiance"),
-                    Bot.Config.Get<string>("Lament"),
-                    Bot.Config.Get<string>("ForgeHelm"),
-                    "Scroll of Life Steal"
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("LuckHelm"),
+                    "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 3, 4 };
+                // equipAllNeeded(
+                //     "Lord Of Order",
+                //     Bot.Config.Get<string>("AweBlast"),
+                //     Bot.Config.Get<string>("Penitence"),
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillList = new int[] { 1, 3, 4, 2}; 
                 equipAllNeeded(
                     "Lord Of Order",
-                    Bot.Config.Get<string>("AweBlast"),
+                    Bot.Config.Get<string>("Valiance"),
                     Bot.Config.Get<string>("Penitence"),
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
-                skillList = new int[] { 1, 2, 3, 4 }; // ravenous
+                // skillList = new int[] { 1, 3, 4 }; // ravenous
+                // equipAllNeeded(
+                //     "ArchPaladin",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Penitence"),
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 2, 3, 4 };
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Valiance"),
@@ -2327,7 +2638,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
-
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
         }
     }
@@ -2338,37 +2650,75 @@ public class CoreUltra
         switch (optionClass)
         {
             case 1:
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Legion Revenant",
+                //     Bot.Config.Get<string>("Arcana"),
+                //     Bot.Config.Get<string>("Vainglory"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 2, 3, 4, 5 };
                 equipAllNeeded(
                     "Legion Revenant",
-                    Bot.Config.Get<string>("Arcana"),
-                    Bot.Config.Get<string>("Vainglory"),
-                    Bot.Config.Get<string>("ForgeHelm"),
+                    Bot.Config.Get<string>("Valiance"),
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
-                skillList = new int[] { 1, 2, 3, 4 };
+                // skillList = new int[] { 1, 2, 3, 4 };
+                // equipAllNeeded(
+                //     "Quantum Chronomancer",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Lament"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillList = new int[] { 1, 3, 4, 2}; 
                 equipAllNeeded(
-                    "Quantum Chronomancer",
+                    "Chaos Avenger",
                     Bot.Config.Get<string>("Valiance"),
-                    Bot.Config.Get<string>("Lament"),
-                    Bot.Config.Get<string>("ForgeHelm"),
-                    "Scroll of Life Steal"
+                    Bot.Config.Get<string>("Penitence"),
+                    Bot.Config.Get<string>("LuckHelm"),
+                    "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
-                skillList = new int[] { 1, 3, 4 };
+                // skillList = new int[] { 1, 3, 4 };
+                // equipAllNeeded(
+                //     "Lord Of Order",
+                //     Bot.Config.Get<string>("AweBlast"),
+                //     Bot.Config.Get<string>("Penitence"),
+                //     Bot.Config.Get<string>("ForgeHelm"),
+                //     "Scroll of Life Steal"
+                // );
+                skillList = new int[] { 1, 3, 4, 2}; 
                 equipAllNeeded(
                     "Lord Of Order",
-                    Bot.Config.Get<string>("AweBlast"),
+                    Bot.Config.Get<string>("Valiance"),
                     Bot.Config.Get<string>("Penitence"),
-                    Bot.Config.Get<string>("ForgeHelm"),
+                    Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
-                skillList = new int[] { 1, 2, 3, 4 }; // ravenous
+                // skillList = new int[] { 1, 3, 4 }; // ravenous
+                // equipAllNeeded(
+                //     "ArchPaladin",
+                //     Bot.Config.Get<string>("Valiance"),
+                //     Bot.Config.Get<string>("Penitence"),
+                //     Bot.Config.Get<string>("LuckHelm"),
+                //     "Scroll of Enrage"
+                // );
+                skillList = new int[] { 1, 2, 3, 4 };
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Valiance"),
@@ -2376,6 +2726,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
         }
     }
@@ -2392,8 +2744,11 @@ public class CoreUltra
                     Bot.Config.Get<string>("Valiance"),
                     Bot.Config.Get<string>("Vainglory"),
                     Bot.Config.Get<string>("WizHelm"),
-                    "Scroll of Enrage"
+                    "Scroll of Enrage",
+                    new string[] {"Sage Tonic", "Potent Malevolence Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
                 skillList = new int[] { 1, 2, 3, 4 };
@@ -2402,28 +2757,37 @@ public class CoreUltra
                     Bot.Config.Get<string>("Lacerate"),
                     Bot.Config.Get<string>("Absolution"),
                     Bot.Config.Get<string>("WizHelm"),
-                    "Scroll of Life Steal"
+                    "Scroll of Life Steal",
+                    new string[] {"Sage Tonic", "Potent Malevolence Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 3, 4 };
                 equipAllNeeded(
                     "Lord Of Order",
                     Bot.Config.Get<string>("AweBlast"),
                     Bot.Config.Get<string>("Absolution"),
                     Bot.Config.Get<string>("LuckHelm"),
-                    "Scroll of Life Steal"
+                    "Scroll of Life Steal",
+                    new string[] {"Fate Tonic", "Potent Battle Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 3, 4 };
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Arcana"),
                     Bot.Config.Get<string>("Penitence"),
                     Bot.Config.Get<string>("LuckHelm"),
-                    "Scroll of Life Steal"
+                    "Scroll of Life Steal",
+                    new string[] {"Fate Tonic", "Potent Battle Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2000;
                 break;
         }
     }
@@ -2442,6 +2806,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
                 skillList = new int[] { 1, 2, 3, 4 };
@@ -2452,6 +2818,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
                 skillList = new int[] { 1, 2, 3, 4, 5 };
@@ -2462,6 +2830,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 4:
                 skillList = new int[] { 1, 2, 3, 4 };
@@ -2472,6 +2842,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
         }
     }
@@ -2490,6 +2862,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
                 monsPriorityID = "1,2";
@@ -2501,10 +2875,12 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
                 monsPriorityID = "2,1";
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 3, 4 };
                 equipAllNeeded(
                     "Lord Of Order",
                     Bot.Config.Get<string>("AweBlast"),
@@ -2512,10 +2888,12 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
                 monsPriorityID = "2,1";
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 3, 4 };
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Valiance"),
@@ -2523,6 +2901,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2000;
                 break;
         }
     }
@@ -2541,6 +2921,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
                 monsPriorityID = "3,1,2";
@@ -2552,6 +2934,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("ForgeHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
                 monsPriorityID = "3,1,2";
@@ -2563,6 +2947,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Life Steal"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 4:
                 monsPriorityID = "1,3,2";
@@ -2574,6 +2960,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
         }
     }
@@ -2584,7 +2972,8 @@ public class CoreUltra
         switch (optionClass)
         {
             case 1:
-                skillList = new int[] { 2, 3, 4 };
+                // skillList = new int[] { 2, 3, 4 };
+				skillList = new int[] { 1, 2, 3, 4, 5 };
                 equipAllNeeded(
                     "Legion Revenant",
                     Bot.Config.Get<string>("Arcana"),
@@ -2593,19 +2982,23 @@ public class CoreUltra
                     "Scroll of Enrage"
                 );
                 
+                skillHeal = 3;
+                healHealthLessThan = 2500;
                 break;
             case 2:
-                skillList = new int[] { 1, 2, 3, 4 };
+                skillList = new int[] { 1, 2, 3, 4, 5 };
                 equipAllNeeded(
                     "Verus DoomKnight",
                     Bot.Config.Get<string>("Dauntless"),
                     Bot.Config.Get<string>("Penitence"),
                     Bot.Config.Get<string>("LuckHelm"),
-                    "Potent Honor Potion"
+                    "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 3:
-                skillList = new int[] { 1, 2, 3, 2, 4 };
+                skillList = new int[] { 1, 3, 4, 5, 2 };
                 equipAllNeeded(
                     "Lord Of Order",
                     Bot.Config.Get<string>("Valiance"),
@@ -2613,9 +3006,11 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
-                skillList = new int[] { 1, 2, 3, 2, 4 };
+                skillList = new int[] { 1, 3, 4, 5, 2  };
                 equipAllNeeded(
                     "ArchPaladin",
                     Bot.Config.Get<string>("Lacerate"),
@@ -2623,6 +3018,8 @@ public class CoreUltra
                     Bot.Config.Get<string>("LuckHelm"),
                     "Scroll of Enrage"
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2000;
                 break;
         }
     }
@@ -2634,7 +3031,7 @@ public class CoreUltra
         switch (optionClass)
         {
             case 1:
-                skillList = new int[] { 1, 2, 3, 4, 5 };
+                skillList = new int[] { 1, 2, 5, 4, 3 };
                 // equipAllNeeded(
                 //     "LightCaster",
                 //     Bot.Config.Get<string>("Elysium"),
@@ -2648,11 +3045,13 @@ public class CoreUltra
                     Bot.Config.Get<string>("Lament"),
                     Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage",
-                    new string[] {"Sage Tonic", "Potent Malevolance Elixir"}
+                    new string[] {"Sage Tonic", "Potent Malevolence Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
             case 2:
-                skillList = new int[] { 1, 2, 3, 4, 5 };
+                skillList = new int[] { 1, 2, 4, 5 };
                 // equipAllNeeded(
                 //     "Verus DoomKnight",
                 //     Bot.Config.Get<string>("Dauntless"),
@@ -2666,11 +3065,13 @@ public class CoreUltra
                     Bot.Config.Get<string>("Lament"),
                     Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage",
-                    new string[] {"Sage Tonic", "Potent Malevolance Elixir"}
+                    new string[] {"Sage Tonic", "Potent Malevolence Elixir"}
                 );
+                skillHeal = 3;
+                healHealthLessThan = 2000;
                 break;
             case 3:
-                skillList = new int[] { 1, 2, 3, 4, 5 };
+                skillList = new int[] { 1, 3, 4, 5 };
                 // equipAllNeeded(
                 //     "Lord Of Order",
                 //     Bot.Config.Get<string>("Valiance"),
@@ -2686,9 +3087,11 @@ public class CoreUltra
                     "Scroll of Life Steal",
                     new string[] {"Fate Tonic", "Potent Battle Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 2500;
                 break;
             case 4:
-                skillList = new int[] { 1, 2, 3, 4, 5 };
+                skillList = new int[] { 1, 5, 3, 4, 2 };
                 // equipAllNeeded(
                 //     "Legion Revenant",
                 //     Bot.Config.Get<string>("Arcana"),
@@ -2711,8 +3114,10 @@ public class CoreUltra
                     Bot.Config.Get<string>("Absolution"),
                     Bot.Config.Get<string>("WizHelm"),
                     "Scroll of Enrage",
-                    new string[] {"Sage Tonic", "Potent Malevolance Elixir"}
+                    new string[] {"Sage Tonic", "Potent Malevolence Elixir"}
                 );
+                skillHeal = 2;
+                healHealthLessThan = 0;
                 break;
         }
     }
@@ -2722,7 +3127,7 @@ public class CoreUltra
         string weapon,
         string cape,
         string helm,
-        string scroll,
+        string scroll = null,
         string[] pots = null
     )
     {
@@ -2739,7 +3144,9 @@ public class CoreUltra
                 _equipAndDrinkConsumable(pot);
             }
         }
-        Core.Equip(scroll);
+        Bot.Sleep(1000);
+        if (scroll != null)
+            Core.Equip(scroll);
     }
 
     public void UsePotion()
@@ -2763,7 +3170,7 @@ public class CoreUltra
         if (!item.Equipped)
         {
             Core.Equip(consumableName);
-            Bot.Sleep(500);
+            Bot.Sleep(1000);
         }
         UsePotion();
         Bot.Sleep(500);
@@ -2800,8 +3207,8 @@ public class CoreUltra
         Bot.Options.InfiniteRange = true;
         Bot.Options.Magnetise = true;
         Bot.Options.LagKiller = true;
-        Bot.Options.HidePlayers = true;
-        Bot.Options.CustomName = customName;
+        // Bot.Options.HidePlayers = true;
+        // Bot.Options.CustomName = customName;
 
         // Bot.Flash.SetGameObject("stage.frameRate", 30);
         Bot.Options.SetFPS = 60;

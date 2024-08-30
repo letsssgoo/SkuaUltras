@@ -1,5 +1,4 @@
 //cs_include Scripts/CoreBots.cs
-//cs_include Scripts/CoreBots.cs
 //cs_include Scripts/CoreFarms.cs
 //cs_include Scripts/CoreAdvanced.cs
 //cs_include Scripts/CoreStory.cs
@@ -15,7 +14,7 @@ using Skua.Core.Models.Items;
 using Skua.Core.Interfaces;
 using Skua.Core.Options;
 
-public class AllUltra
+public class Daily
 {
     private IScriptInterface Bot => IScriptInterface.Instance;
     private CoreBots Core => CoreBots.Instance;
@@ -37,6 +36,7 @@ public class AllUltra
         cUltra.UltraEngineer();
         cUltra.UltraWarden();
         cUltra.UltraEzrajal();
+        cUltra.QueenIona();
 
         // Core.SetOptions(false);
     }

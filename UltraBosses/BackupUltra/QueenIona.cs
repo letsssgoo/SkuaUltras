@@ -14,7 +14,7 @@ using Skua.Core.Models.Items;
 using Skua.Core.Interfaces;
 using Skua.Core.Options;
 
-public class AllUltra
+public class QueenIona
 {
     private IScriptInterface Bot => IScriptInterface.Instance;
     private CoreBots Core => CoreBots.Instance;
@@ -31,17 +31,7 @@ public class AllUltra
         Core.SetOptions(disableClassSwap: true);
 
         cUltra.InitUltra();
-
-        cUltra.UltraTyndarius();
-        cUltra.UltraEngineer();
-        cUltra.UltraWarden();
-        cUltra.UltraEzrajal();
-        cUltra.ChampionDrakath();
-        cUltra.UltraDage();
-        cUltra.UltraNulgath();
-        cUltra.UltraDrago();
-        cUltra.UltraDarkon();
-        cUltra.UltraSpeaker();
+        
         cUltra.QueenIona();
 
         // Core.SetOptions(false);
